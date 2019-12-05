@@ -7,11 +7,11 @@
 > ≈‰÷√—˘ Ω£∫
 ```js
 	{
-		Title = "≤‚ ‘÷∏¡Ó",
-		ExeCmd = "echo 'test'",
-		CronStr = "*/2 * * * *",
-		Valid = false,
-		Receivers = [],
+		Title = "≤‚ ‘÷∏¡Ó"
+		ExeCmd = "echo 'test'"
+		CronStr = "*/2 * * * *"
+		Valid = false
+		Receivers = []
 		AttachFile = ""
 	}
 ```
