@@ -28,7 +28,7 @@ func task(cmd config.Cmd) {
 	log.Printf("%+v\n", cmd)
 	if cmd.Valid {
 		if res, err := basic.Exec(execCmd); err != nil {
-			mail.SendMsg(title, fmt.Sprintf("指令执行失败: %+v %+v。\n", res, err), execCmd, attach, receivers)
+			mail.SendMsg(title, fmt.Sprintf("指令执行失败: %+v %s。\n", err, string(res)), execCmd, attach, receivers)
 		} else {
 			execCmd = fmt.Sprintf("执行时长: %vs 执行指令: %s", time.Now().Sub(start).Seconds(), execCmd)
 			mail.SendMsg(title, string(res), execCmd, attach, receivers)
