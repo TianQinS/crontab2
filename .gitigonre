@@ -1,0 +1,10 @@
+# Normal output
+*.exe
+*.log
+*.cpuprof
+
+# Project-local cache
+.*.swp
+.*.=un~
+
+# vendor/*

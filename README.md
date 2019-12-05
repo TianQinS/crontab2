@@ -4,7 +4,8 @@
 **特点**
 
 类似unix crontab的计划任务功能，支持屏显信息和运行日志的邮件发送。
->1. 配置样式：
+> 配置样式：
+```js
 	{
 		Title = "测试指令",
 		ExeCmd = "echo 'test'",
@@ -13,4 +14,4 @@
 		Receivers = [],
 		AttachFile = ""
 	}
-
+```
