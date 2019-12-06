@@ -11,12 +11,26 @@ import (
 	"github.com/TianQinS/crontab2/utils/mail"
 	"github.com/TianQinS/fastapi/basic"
 	"github.com/TianQinS/fastapi/timer"
+	"github.com/axgle/mahonia"
 	"github.com/kataras/iris"
 )
 
 var (
 	port = flag.String("p", "23456", "iris http port")
 )
+
+// 针对gbk编码的系统
+func byte2string(out []byte) string {
+	data := string(out)
+	if config.Conf.CharSet == "gbk" {
+		srcCoder := mahonia.NewDecoder("gbk")
+		srcResult := srcCoder.ConvertString(data)
+		tagCoder := mahonia.NewDecoder("utf8")
+		_, cdata, _ := tagCoder.Translate([]byte(srcResult), true)
+		data = string(cdata)
+	}
+	return data
+}
 
 // 计划任务执行
 func task(cmd config.Cmd) {
@@ -28,13 +42,13 @@ func task(cmd config.Cmd) {
 	log.Printf("%+v\n", cmd)
 	if cmd.Valid {
 		if res, err := basic.Exec(execCmd); err != nil {
-			mail.SendMsg(title, fmt.Sprintf("指令执行失败: %+v %s。\n", err, string(res)), execCmd, attach, receivers)
+			mail.SendMsg(title, fmt.Sprintf("[CMD] Failed: %+v %s. \n", err, byte2string(res)), execCmd, attach, receivers)
 		} else {
-			execCmd = fmt.Sprintf("执行时长: %vs 执行指令: %s", time.Now().Sub(start).Seconds(), execCmd)
-			mail.SendMsg(title, string(res), execCmd, attach, receivers)
+			execCmd = fmt.Sprintf("[TimeUsed]: %vs [CMD]: %s", time.Now().Sub(start).Seconds(), execCmd)
+			mail.SendMsg(title, byte2string(res), execCmd, attach, receivers)
 		}
 	} else {
-		mail.SendMsg(title, "该项配置未开启。\n", execCmd, "", receivers)
+		mail.SendMsg(title, "[CMD] Invalid.\n", execCmd, "", receivers)
 	}
 }
 
@@ -48,10 +62,6 @@ func crontab(cmd config.Cmd) {
 	})
 }
 
-// 加载另外的httpHandle
-func InitApi(app *iris.Application) {
-}
-
 // 加载crontab
 func init() {
 	for _, cmd := range config.Conf.Cmds {
@@ -63,6 +73,5 @@ func main() {
 	// runtime.GOMAXPROCS(2)
 	flag.Parse()
 	http := app.NewApp()
-	InitApi(http)
 	http.Run(iris.Addr(":" + *port))
 }

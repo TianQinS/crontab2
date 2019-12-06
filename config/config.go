@@ -17,10 +17,11 @@ var (
 )
 
 type Config struct {
-	Debug bool // 是否调试模式
-	Mail  Mail
-	Http  Http
-	Cmds  []Cmd
+	Debug   bool   // 是否调试模式
+	CharSet string // 操作系统编码
+	Mail    Mail
+	Http    Http
+	Cmds    []Cmd
 }
 
 // 服务邮件配置
