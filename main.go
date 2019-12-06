@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"sync/atomic"
 	"time"
 
 	"github.com/TianQinS/crontab2/app"
@@ -16,7 +17,9 @@ import (
 )
 
 var (
-	port = flag.String("p", "23456", "iris http port")
+	port       = flag.String("p", "23456", "iris http port")
+	// 当前执行任务数
+	gCnt int64 = 0
 )
 
 // 针对gbk编码的系统
@@ -39,7 +42,8 @@ func task(cmd config.Cmd) {
 	receivers := cmd.Receivers
 	attach := cmd.AttachFile
 	start := time.Now()
-	log.Printf("%+v\n", cmd)
+	atomic.AddInt64(&gCnt, 1)
+	log.Printf("[Cnt] %d start %+v\n", gCnt, cmd)
 	if cmd.Valid {
 		if res, err := basic.Exec(execCmd); err != nil {
 			mail.SendMsg(title, fmt.Sprintf("[CMD] Failed: %+v %s. \n", err, byte2string(res)), execCmd, attach, receivers)
@@ -50,6 +54,8 @@ func task(cmd config.Cmd) {
 	} else {
 		mail.SendMsg(title, "[CMD] Invalid.\n", execCmd, "", receivers)
 	}
+	atomic.AddInt64(&gCnt, -1)
+	log.Printf("[Cnt] %d end %s\n", gCnt, title)
 }
 
 // 计划任务配置
