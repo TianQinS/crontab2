@@ -28,7 +28,7 @@ func SendMsg(title, msg, cmd, attach string, receivers []string) {
 
 	height := strconv.Itoa(num * MSG_LINE_HEIGHT)
 	content := fmt.Sprintf(MSG_INFO, MSG_CSS, height, msg, cmd)
-	receivers = append(receivers, Conf.DefaultReceivers...)
+	// receivers = append(receivers, Conf.DefaultReceivers...)
 	SendMail(content, receivers, title, attach)
 }
 

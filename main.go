@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	port       = flag.String("p", "23456", "iris http port")
+	port = flag.String("p", "23456", "iris http port")
 	// 当前执行任务数
 	gCnt int64 = 0
 )
@@ -46,6 +46,8 @@ func task(cmd config.Cmd) {
 	log.Printf("[Cnt] %d start %+v\n", gCnt, cmd)
 	if cmd.Valid {
 		if res, err := basic.Exec(execCmd); err != nil {
+			// 错误信息添加默认收件人
+			receivers = append(receivers, config.Conf.Mail.DefaultReceivers...)
 			mail.SendMsg(title, fmt.Sprintf("[CMD] Failed: %+v %s. \n", err, byte2string(res)), execCmd, attach, receivers)
 		} else {
 			execCmd = fmt.Sprintf("[TimeUsed]: %vs [CMD]: %s", time.Now().Sub(start).Seconds(), execCmd)
